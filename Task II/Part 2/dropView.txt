@@ -1,0 +1,5 @@
+--drop View
+
+DROP VIEW Above_avg_price;
+DROP VIEW PREMIUM_BUYERS;
+DROP MATERIALIZEDVIEW ClientInformation;

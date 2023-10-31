@@ -1,0 +1,3 @@
+DROP TRIGGER calc_total_price ON Ordering;
+DROP TRIGGER UpdateOrdering ON Ordering;
+DROP TRIGGER CheckIfInStock ON Ordering;

@@ -1,0 +1,33 @@
+//Products that are above average price
+
+CREATE VIEW Above_avg_price AS
+SELECT product_id, product_name, product_price
+FROM Product
+WHERE product_price > (SELECT AVG(product_price) FROM Product);
+
+select * from Above_avg_price;
+
+//Clients considered Premium Buyers if they have bought more than 2 products
+
+CREATE VIEW PREMIUM_BUYERS AS
+SELECT Client.client_id, first_name, last_name, count(Ordering.product_id) as "items bought"
+FROM Client, Ordering
+WHERE Client.client_id = Ordering.client_id
+GROUP BY Client.client_id, first_name, last_name
+HAVING COUNT(Ordering.product_id) > 2;
+
+SELECT * FROM PREMIUM_BUYERS;
+
+//Items bought and money spent of each client in the past 2 months
+
+CREATE MATERIALIZED VIEW ClientInformation AS
+SELECT Client.client_id, Client.first_name, Client.last_name,
+COUNT(Ordering.product_quantity) AS items_bought,
+SUM(Ordering.product_price) as money_spent_in_last_2_months
+FROM Client, Ordering
+WHERE Client.client_id = Ordering.client_id AND Ordering.order_date > date_trunc('day',('now'::timestamp - '2 month'::interval))
+GROUP BY Client.client_id, Client.first_name, Client.last_name
+WITH DATA;
+
+REFRESH MATERIALIZED VIEW ClientInformation;
+

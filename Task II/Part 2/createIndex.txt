@@ -1,0 +1,3 @@
+CREATE INDEX Client_Name ON Client (first_name, last_name);
+
+CREATE UNIQUE INDEX product_uid ON Product (product_name);

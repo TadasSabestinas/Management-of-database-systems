@@ -1,0 +1,6 @@
+--drops table
+
+DROP TABLE Client CASCADE;
+DROP TABLE Product CASCADE;
+DROP TABLE Ordering CASCADE;
+DROP TABLE Tracking_Detail CASCADE;

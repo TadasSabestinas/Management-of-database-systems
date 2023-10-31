@@ -1,0 +1,91 @@
+--multiplies product_quantity with product_price to get total_order_price
+create or replace function calc_total_price()
+returns trigger
+as $$
+declare total numeric;
+BEGIN
+total = new.product_price * new.product_quantity;
+new.total_order_price = total;
+return new;
+end;
+$$ language plpgsql;
+
+create trigger calc_total_price
+before insert on Ordering
+for each row
+execute procedure calc_total_price();
+
+
+--insert (will show with total_order_value)
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, product_price, order_status, order_date) VALUES (234463067,1,45459,2,429.99,'AWAITING SHIPMENT','2022-12-06 16:01:54.59107+02');
+
+--delete
+DROP TRIGGER calc_total_price ON Ordering;
+
+
+--disallows frop updating the order if it was processed, only delete possible
+CREATE OR REPLACE FUNCTION UpdateOrdering()
+  RETURNS trigger AS
+$$BEGIN
+    RAISE EXCEPTION 'Information about the order that has already been processed cannot be changed!';
+    RETURN NEW;
+END;$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER UpdateOrdering
+    BEFORE UPDATE ON Ordering
+    FOR EACH ROW
+    EXECUTE PROCEDURE UpdateOrdering();
+
+--test
+
+UPDATE Ordering SET product_quantity = 4 where order_id = 203331308;
+
+--DELETE
+DROP TRIGGER UpdateOrdering ON Ordering;
+
+--checks if the product you are trying to order is out of stock
+
+CREATE OR REPLACE FUNCTION CheckIfInStock()
+  RETURNS trigger AS
+$$BEGIN
+IF New.product_id = (select Product.product_id FROM Product WHERE Product.Product_quantity = 0) 
+    THEN RAISE EXCEPTION 'The product is out of stock. Try purchasing a different product';
+	END IF;
+    RETURN NEW;
+END;$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER CheckIfInStock
+    BEFORE INSERT ON Ordering
+    FOR EACH ROW
+    EXECUTE PROCEDURE CheckIfInStock();
+
+--test
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, product_price, order_status, order_date) VALUES (245573313,2,65000,1,69.99,'SHIPPED','2022-12-04 09:55:14+02'); --leis
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, product_price, order_status, order_date) VALUES (245554113,2,12263,1,69.99,'SHIPPED','2022-12-04 09:55:14+02'); --neleis
+
+--delete
+DROP TRIGGER CheckIfInStock ON Ordering;
+
+//autoincrementds client_id
+CREATE OR REPLACE FUNCTION CreateClientID()
+RETURNS trigger AS
+$$BEGIN
+IF NEW.client_id IS NULL THEN
+NEW.client_id = (SELECT COALESCE(MAX(client_id),0)+1 FROM Client);
+END IF;
+RETURN NEW;
+END;$$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER CreateClientID
+    BEFORE INSERT ON Client
+    FOR EACH ROW
+    EXECUTE PROCEDURE CreateClientID();
+
+//test
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (NULL,'Mantas','Mafas','1996-02-14',869809597,'Gindvilio','2',' Vilnius','01100');
+
+//delete
+DROP TRIGGER CreateClientID ON Client;

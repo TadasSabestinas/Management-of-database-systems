@@ -1,0 +1,94 @@
+CREATE TABLE Client (
+  "client_id" int NOT NULL CHECK (client_id > 0),
+  "first_name" varchar(50) NOT NULL DEFAULT 'Vardenis',
+  "last_name" varchar(50) NOT NULL DEFAULT 'Pavardenis',
+  "date_of_birth" date NOT NULL,
+  "phone_number" int NOT NULL,
+  "street" varchar(50) NOT NULL,
+  "street_number" varchar(10) NOT NULL,
+  "city" varchar(50) NOT NULL,
+  "zip_code" varchar(5) NOT NULL,
+  PRIMARY KEY ("client_id")
+);
+
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (1,'Rosita','Spuotiene','1965-04-01',869735436,'Alaziju','5F',' Marijampole','68100');
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (2,'Tomas','Dijarnas','2003-09-24',867809593,'Geliu','15-13',' Marijampole','68113');
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (3,'Dija','Pangonyte','1990-05-14',863804521,'A. Jaksto','2',' Vilnius','01105');
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (5,'Lisa','Svensona','2002-12-24',862744474,'Pylimo','10B','Vilnius','01307');
+INSERT into Client (client_id, first_name, last_name, date_of_birth, phone_number, street, street_number, city, zip_code) VALUES (5,'Tadas','Sabestinas','2001-07-17',862435536,'Udrijos','19B','Alytus','62411');
+
+CREATE TABLE Product (
+  "product_id" int NOT NULL CHECK (product_id > 0),
+  "product_name" varchar(50) NOT NULL,
+  "product_price" numeric NOT NULL,
+  "status" varchar(20) NOT NULL,
+  "product_quantity" int NOT NULL,
+  PRIMARY KEY ("product_id")
+  CONSTRAINT Value_check CHECK (product_price>0 and product_price<10000)
+);
+
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (24748,'Pele Logitech G-PRO Wireless',89.99,'IN STOCK',13);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (65000,' Zaidimu ausines HyperX Cloud Revolver 7.1 (Juodos)',69.99,'IN STOCK',25);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (74733,'ŽAIDIMŲ STALAS NITRO CONCEPTS D16E (JUODAS)',429.99,'IN STOCK',1);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (72224,'PELĖS KILIMĖLIS CORSAIR GAMING (M 360MM X 300MM)',19.99,'IN STOCK',26);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (95021,' WEB KAMERA LOGITECH C930E',79.99,'IN STOCK',5);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (45459,'LENKTAS ŽAIDIMŲ MONITORIUS XIAOMI / 34 COLIŲ',429.99,'IN STOCK',2);
+INSERT into Product (product_id, product_name, product_price, status, product_quantity) VALUES (12263,'ŽAIDIMŲ PULTELIS LOGITECH F310 GAMEPAD',27.99,'OUT OF STOCK',0);
+
+CREATE TABLE Ordering (
+  "order_id" int NOT NULL CHECK (order_id > 0),
+  "client_id" int NOT NULL,
+  "product_id" int NOT NULL,
+  "product_quantity" int NOT NULL,
+  "order_price" numeric NOT NULL,
+  "order_status" varchar(20) NOT NULL,
+  "order_date" timestamptz DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ("order_id"),
+  CONSTRAINT "FK_Ordering.client_id"
+    FOREIGN KEY ("client_id")
+      REFERENCES Client("client_id"),
+  CONSTRAINT "FK_Ordering.product_id"
+    FOREIGN KEY ("product_id")
+      REFERENCES Product("product_id")
+);
+
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (203331308,40290549,24748,1,89.99,'AWAITING SHIPMENT','2022-12-05 00:00:00+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (216110415,40290549,72224,1,19.99,'AWAITING SHIPMENT','2022-12-05 00:00:00+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (232263067,47152088,45459,1,429.99,'AWAITING SHIPMENT','2022-12-06 16:01:54.59107+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (268231294,46273950,24748,1,89.99,'AWAITING SHIPMENT',' 2022-12-06 16:05:02.911884+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (289958090,40290549,72224,1,19.99,'DELIVERED','2022-12-01 19:10:25+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (249110755,47152088,95021,1,79.99,'DELIVERED','2022-11-29 18:11:35+02');
+INSERT into Ordering (order_id, client_id, product_id, product_quantity, order_price, order_status, order_date) VALUES (244473313,47423151,65000,1,69.99,'SHIPPED','2022-12-04 09:55:14+02');
+
+CREATE TABLE Tracking_Detail (
+  "tracking_id" int NOT NULL CHECK (tracking_id > 0),
+  "order_id" int NOT NULL,
+  "client_id" int NOT NULL,
+  "product_id" int NOT NULL,
+  "shipment_status" varchar(20) NOT NULL,
+  "shipment_departs" timestamptz,
+  "shipment_received" timestamptz,
+  PRIMARY KEY ("tracking_id"),
+  CONSTRAINT "FK_Tracking_Detail.order_id"
+    FOREIGN KEY ("order_id")
+      REFERENCES Ordering("order_id"),
+  CONSTRAINT "FK_Tracking_Detail.client_id"
+    FOREIGN KEY ("client_id")
+      REFERENCES Client("client_id"),
+  CONSTRAINT "FK_Tracking_Detail.product_id"
+    FOREIGN KEY ("product_id")
+      REFERENCES Product("product_id")
+);
+
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (686375441,203331308,40290549,24748,'AWAITING SHIPMENT','2022-12-07 12:00:00+02', NULL);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (604496919,216110415,40290549,72224,'AWAITING SHIPMENT','2022-12-07 12:00:00+02', NULL);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (616290630,232263067,47152088,45459,'AWAITING SHIPMENT','2022-12-08 12:00:00+02', NULL);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (622576146,268231294,46273950,24748,'AWAITING SHIPMENT','2022-12-08 12:00:00+02', NULL);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (636693637,244473313,47423151,65000,'SHIPPED','2022-12-06 12:00:00+02', NULL);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (622907789,289958090,40290549,72224,'DELIVERED','2022-12-03 12:00:00+02',2022-12-05 16:14:25+02);
+INSERT into Tracking_Detail (tracking_id, order_id, client_id, product_id, shipment_status, shipment_departs, shipment_received) VALUES (65617540,249110755,47152088,95021,'DELIVERED','2022-12-01 12:00:00+02',2022-12-03 11:11:47+02);
+
+
+
+
+

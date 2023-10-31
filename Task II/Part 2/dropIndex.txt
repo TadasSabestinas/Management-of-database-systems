@@ -1,0 +1,3 @@
+--drop Index
+DROP INDEX Client_Name;
+DROP INDEX product_uid;
