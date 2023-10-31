@@ -26,4 +26,4 @@ Task two is seperated in three different parts.
 
 ### Part 3
 
-#### A java application implementing CRUD operations for the designed E-Shop orders database. showcases the SQL sentences required to build the database as well as inserts for mock data. It creates the database, tables, triggers and etc.. It also provides the sentences for deletion.
+#### A java application implementing CRUD operations for the designed E-Shop orders database.
