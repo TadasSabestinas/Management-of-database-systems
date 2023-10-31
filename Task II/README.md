@@ -12,6 +12,4 @@
 
 ### Part 3
 
-#### Implements CRUD operations for the designed E-Shop orders database.
-
-#### showcases the SQL sentences required to build the database as well as inserts for mock data. It creates the database, tables, triggers and etc.. It also provides the sentences for deletion.
+#### Developed a Java project with JDBC integration, which seamlessly executes Create, Read, Update, and Delete (CRUD) operations, meticulously designed to interact with the aforementioned database.
