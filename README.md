@@ -14,7 +14,7 @@ Task two is seperated in three different parts.
 
 ### Part 1
 
-#### Introduces the database structure  through ER diagram and model of an E-Shop orders.
+#### Introduces the database structure  through ER diagram and model of E-Shop orders.
 
 ![ER diagram](https://github.com/TadasSabestinas/Management-of-database-systems/blob/main/Task%20II/Part%201/ER%20diagrama.png?raw=true)
 
