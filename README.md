@@ -26,4 +26,4 @@ Task two is seperated in three different parts.
 
 ### Part 3
 
-#### A java application implementing CRUD operations for the designed E-Shop orders database.
+#### Developed a Java project with JDBC integration, which seamlessly executes Create, Read, Update, and Delete (CRUD) operations, meticulously designed to interact with the aforementioned database.
